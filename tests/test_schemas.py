@@ -1,7 +1,7 @@
 from datetime import datetime
 import pytest
 from pydantic import ValidationError
-from src.extractors.schemas import WeatherApiResponse, WeatherHourlyRaw
+from src.extractors.schemas import WeatherApiResponse
 
 
 def test_valid_weather_payload():
