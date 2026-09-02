@@ -1,0 +1,60 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: weather_dwh
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_secure_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Ruff (Linter & Format check)
+        run: |
+          ruff check src/ tests/
+
+      - name: Run Pytest
+        run: |
+          pytest tests/
+
+      - name: Verify dbt Models
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_DB: weather_dwh
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_secure_pass
+        run: |
+          python -m src.loaders.init_db
+          dbt run --project-dir dbt --profiles-dir config
+          dbt test --project-dir dbt --profiles-dir config
