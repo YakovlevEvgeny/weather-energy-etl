@@ -29,3 +29,25 @@ End-to-end production-grade ELT data pipeline for collecting, validating, and tr
      │          ▼  (dbt table aggregation)                    │
      │   public_marts.fct_daily_weather_energy                │
      └────────────────────────────────────────────────────────┘
+---
+
+## 🛠 Tech Stack
+
+* Python 3.12 (Pydantic v2, SQLAlchemy)
+* PostgreSQL 15 (Docker)
+* dbt-postgres
+* GitHub Actions CI/CD
+
+---
+
+## 🚀 Quick Start
+
+1. Start DB:
+   docker compose up -d
+
+2. Run Pipeline:
+   python run_pipeline.py
+
+3. Run Transformations & Tests:
+   dbt run --project-dir dbt --profiles-dir config
+   dbt test --project-dir dbt --profiles-dir config
