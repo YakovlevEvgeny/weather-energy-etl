@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: fct_daily_weather_energy
+    description: "Дневная аналитическая витрина погодных условий и потенциала возобновляемой энергии"
+    columns:
+      - name: daily_summary_id
+        description: "Первичный ключ суточной записи"
+        tests:
+          - unique
+          - not_null
+      - name: city_name
+        tests:
+          - not_null
+      - name: hourly_records_count
+        tests:
+          - not_null
